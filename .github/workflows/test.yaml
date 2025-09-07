@@ -1,4 +1,4 @@
-name: build
+name: test
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,6 +18,5 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-      - name: build app
-        run: make build
-
+      - name: test
+        run: make test
