@@ -17,3 +17,7 @@ build: vet fmt
 .PHONY: test
 test: vet fmt
 	go test ./... --shuffle=on -race -coverprofile=coverage.out -covermode=atomic
+
+.PHONY: data
+data:
+	./hack/pull-poe-data.sh

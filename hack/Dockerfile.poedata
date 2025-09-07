@@ -1,0 +1,24 @@
+FROM alpine:3.22
+
+RUN apk update && apk add curl git python3 pipx && pipx install 'poetry~=1.8'
+
+ENV PATH="/root/.local/bin:$PATH"
+ARG REPOE_SHA
+ARG PYPOE_SHA
+
+RUN git clone --depth 1 https://github.com/repoe-fork/repoe.git RePoE && \
+	cd RePoE \
+	git fetch origin $REPOE_SHA \
+	git checkout $REPOE_SHA
+RUN	git clone --depth 1 https://github.com/repoe-fork/pypoe.git PyPoE && \
+	cd PyPoE \
+	git fetch origin $PYPOE_SHA \
+	git checkout $PYPOE_SHA
+
+RUN cd RePoE && poetry install
+
+RUN cd RePoE && \
+	poetry run pypoe_schema_import -a stable --poe2 -u https://repoe-fork.github.io/dat-export/poe2/filtered.json \
+	&& poetry run repoe base_items -l English --poe2 -o ../data
+
+RUN mkdir export && find data -maxdepth 2 -type f -name "*.min.json" -exec cp {} export +
