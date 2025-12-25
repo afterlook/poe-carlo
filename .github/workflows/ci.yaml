@@ -37,16 +37,16 @@ jobs:
         with:
           go-version: 1.25.x
           cache: false
-      - name: Setup Golang caches
+      - name: Setup build caches
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-golang-
-      - name: Restore tools cache
+            ${{ runner.os }}-build-
+      - name: Cache tools
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/bin
@@ -65,16 +65,16 @@ jobs:
         with:
           go-version: 1.25.x
           cache: false
-      - name: Setup Golang caches
+      - name: Cache build
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-golang-
-      - name: Restore tools cache
+            ${{ runner.os }}-build-
+      - name: Cache tools
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/bin
@@ -99,10 +99,10 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-tests-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-golang-
-      - name: Restore tools cache
+            ${{ runner.os }}-tests-
+      - name: Cache tools
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/bin
