@@ -75,4 +75,4 @@ jobs:
           path: ~/.cache/go-build
           key: ${{ runner.os }}-go-build-${{ hashFiles('**/*.go', 'go.mod', 'go.sum') }}
       - name: Test
-        run: GODEBUG=gocachehash=1 make test
+        run: make test
