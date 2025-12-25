@@ -82,3 +82,9 @@ jobs:
           ls -la bin/gotestsum* || echo "No gotestsum files found"
       - name: Test
         run: make test
+      - name: Debug bin directory after run
+        run: |
+          echo "Contents of bin directory:"
+          ls -la bin/ || echo "bin directory does not exist"
+          echo "Checking for gotestsum:"
+          ls -la bin/gotestsum* || echo "No gotestsum files found"
