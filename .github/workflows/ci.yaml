@@ -74,5 +74,11 @@ jobs:
           key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-golang-
+      - name: Debug bin directory
+        run: |
+          echo "Contents of bin directory:"
+          ls -la bin/ || echo "bin directory does not exist"
+          echo "Checking for gotestsum:"
+          ls -la bin/gotestsum* || echo "No gotestsum files found"
       - name: Test
         run: make test
