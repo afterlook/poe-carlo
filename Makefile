@@ -18,6 +18,9 @@ gotestsum: $(GOTESTSUM)
 $(GOTESTSUM): $(LOCALBIN)
 	$(call go-install-tool,$(GOTESTSUM),gotest.tools/gotestsum,$(GOTESTSUM_VERSION))
 
+.PHONY: tools
+tools: golangci-lint gotestsum
+
 .PHONY: vet
 fmt:
 	@go fmt ./...

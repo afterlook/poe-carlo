@@ -9,6 +9,25 @@ permissions:
   contents: read
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.25.x
+          cache: false
+      - name: Cache tools
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/bin
+          key: ${{ runner.os }}-tools-${{ hashFiles('Makefile') }}
+          restore-keys: |
+            ${{ runner.os }}-tools-
+      - name: Install tools
+        run: make tools
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -24,10 +43,16 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-            ${{ github.workspace }}/bin
           key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-golang-
+      - name: Restore tools cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/bin
+          key: ${{ runner.os }}-tools-${{ hashFiles('Makefile') }}
+          restore-keys: |
+            ${{ runner.os }}-tools-
       - name: Build
         run: make build
 
@@ -46,10 +71,16 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-            ${{ github.workspace }}/bin
           key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-golang-
+      - name: Restore tools cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/bin
+          key: ${{ runner.os }}-tools-${{ hashFiles('Makefile') }}
+          restore-keys: |
+            ${{ runner.os }}-tools-
       - name: Lint
         run: make lint
 
@@ -68,23 +99,15 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-            ${{ github.workspace }}/bin
           key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-golang-
-      - name: Debug bin directory
-        run: |
-          echo "Contents of bin directory:"
-          ls -la bin/ || echo "bin directory does not exist"
-          echo "Checking for gotestsum:"
-          ls -la bin/gotestsum* || echo "No gotestsum files found"
+      - name: Restore tools cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/bin
+          key: ${{ runner.os }}-tools-${{ hashFiles('Makefile') }}
+          restore-keys: |
+            ${{ runner.os }}-tools-
       - name: Test
         run: make test
-      - name: Debug bin directory after run
-        run: |
-          echo "Contents of bin directory:"
-          ls -la bin/ || echo "bin directory does not exist"
-          echo "Checking for gotestsum:"
-          ls -la bin/gotestsum* || echo "No gotestsum files found"
-          echo "Checking for gotestsum:"
-          ls -la ${{ github.workspace }}/bin/gotestsum* || echo "No gotestsum with gh vars"
