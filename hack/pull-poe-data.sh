@@ -14,3 +14,5 @@ docker create --name poedata poedata:latest
 mkdir -p data
 docker cp poedata:export/. data
 docker rm poedata
+
+go run hack/go-tools/archive/main.go data/base_items.min.json data/base_item.min.json.gzip

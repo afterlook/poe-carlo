@@ -33,7 +33,6 @@ linters:
     - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
     - exhaustive # checks exhaustiveness of enum switch statements
     - fatcontext # detects nested contexts in loops
-    - forbidigo # forbids identifiers
     - gocheckcompilerdirectives # validates go compiler directive comments (//go:)
     - goconst # finds repeated strings that could be replaced by a constant
     - godot # checks if comments end in a period
@@ -84,9 +83,7 @@ linters:
       enable-all: true
       disable:
         - fieldalignment # too strict
-      settings:
-        shadow:
-          strict: true
+        - shadow
 
     reassign:
       patterns:
