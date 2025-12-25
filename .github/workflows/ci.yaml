@@ -50,10 +50,8 @@ jobs:
           key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-golang-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
-        with:
-          version: v2.4
+      - name: Lint
+        run: make lint
 
   test:
     runs-on: ubuntu-latest
