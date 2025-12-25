@@ -88,3 +88,5 @@ jobs:
           ls -la bin/ || echo "bin directory does not exist"
           echo "Checking for gotestsum:"
           ls -la bin/gotestsum* || echo "No gotestsum files found"
+          echo "Checking for gotestsum:"
+          ls -la ${{ github.workspace }}/bin/gotestsum* || echo "No gotestsum with gh vars"
