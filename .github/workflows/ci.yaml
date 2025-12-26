@@ -43,7 +43,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-build-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('**/*.go', '**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-build-
       - name: Cache tools
@@ -71,7 +71,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-build-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('**/*.go', '**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-build-
       - name: Cache tools
@@ -99,7 +99,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-tests-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-tests-${{ hashFiles('**/*.go', '**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-tests-
       - name: Cache tools
