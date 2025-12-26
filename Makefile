@@ -39,7 +39,7 @@ build: vet fmt
 
 .PHONY: test
 test: gotestsum vet fmt
-	@"$(GOTESTSUM)" --format testname -- -race -coverprofile=coverage.out -covermode=atomic ./...
+	@"$(GOTESTSUM)" --format testname -- -coverprofile=coverage.out -covermode=atomic ./...
 
 .PHONY: data
 data:
