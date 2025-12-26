@@ -17,33 +17,62 @@ import (
 func main() {
 	var inPath, outPath string
 	cmd := &cli.Command{
-		Name:        "json_to_gzip",
-		Usage:       "Convert json file to gzip",
-		UsageText:   "json_to_gzip <in> <out>",
-		Description: "Arguments:\n  in   input json file\n  out  output gzip file",
-		Arguments: []cli.Argument{
-			&cli.StringArg{
-				Name:        "in",
-				Destination: &inPath,
-				UsageText:   "input json file",
-			},
-			&cli.StringArg{
-				Name:        "out",
-				Destination: &outPath,
-				UsageText:   "output binary file",
-			},
-		},
-		Action: func(context.Context, *cli.Command) error {
-			checksumMatch, err := Run(inPath, outPath)
-			if err != nil {
-				return err
-			}
+		Commands: []*cli.Command{
+			{
+				Name:        "archive",
+				Usage:       "Convert json file to gzip",
+				UsageText:   "archive <in> <out>",
+				Description: "Arguments:\n  in   input json file\n  out  output gzip file",
+				Arguments: []cli.Argument{
+					&cli.StringArg{
+						Name:        "in",
+						Destination: &inPath,
+						UsageText:   "input json file",
+					},
+					&cli.StringArg{
+						Name:        "out",
+						Destination: &outPath,
+						UsageText:   "output binary file",
+					},
+				},
+				Action: func(context.Context, *cli.Command) error {
+					checksumMatch, err := Archive(inPath, outPath)
+					if err != nil {
+						return err
+					}
 
-			if checksumMatch {
-				fmt.Println("Checksum matched...")
-			}
+					if checksumMatch {
+						fmt.Println("Checksum matched...")
+					}
 
-			return nil
+					return nil
+				},
+			},
+			{
+				Name:        "unarchive",
+				Usage:       "Unarchive input file",
+				UsageText:   "unarchive <in> <out>",
+				Description: "Arguments:\n  in   input archive file\n  out  output file to unarchive",
+				Arguments: []cli.Argument{
+					&cli.StringArg{
+						Name:        "in",
+						Destination: &inPath,
+						UsageText:   "input archive file",
+					},
+					&cli.StringArg{
+						Name:        "out",
+						Destination: &outPath,
+						UsageText:   "output file to unarchive",
+					},
+				},
+				Action: func(context.Context, *cli.Command) error {
+					err := Unarchive(inPath, outPath)
+					if err != nil {
+						return err
+					}
+					return nil
+				},
+			},
 		},
 	}
 
@@ -52,7 +81,7 @@ func main() {
 	}
 }
 
-func Run(inPath, outPath string) (bool, error) {
+func Archive(inPath, outPath string) (bool, error) {
 	inFile, err := os.Open(inPath)
 	if err != nil {
 		return false, fmt.Errorf("failed to open input file: %w", err)
@@ -140,4 +169,33 @@ func checksumMatch(inFile, hashFile *os.File, hasher hash.Hash) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func Unarchive(inPath, outPath string) error {
+	inFile, err := os.OpenFile(inPath, os.O_RDONLY, 0o644)
+	if err != nil {
+		return fmt.Errorf("could not open input file: %w", err)
+	}
+	defer inFile.Close()
+
+	zipReader, err := gzip.NewReader(inFile)
+	if err != nil {
+		return err
+	}
+	defer zipReader.Close()
+
+	outFile, err := os.OpenFile(outPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
+	if err != nil {
+		return fmt.Errorf("could not open output file: %w", err)
+	}
+
+	_, err = io.Copy(outFile, zipReader)
+	if err != nil {
+		return fmt.Errorf("could not unzip file: %w", err)
+	}
+	if err := outFile.Close(); err != nil {
+		return fmt.Errorf("could not close output file and flush it to disk: %w", err)
+	}
+
+	return nil
 }
